@@ -1,0 +1,67 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String        @id @default(cuid())
+  clerkId       String        @unique
+  email         String        @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([id])
+}
+
+model Collection {
+  id            String        @id @default(cuid())
+  name          String
+  description   String?
+  coverImage    String?
+  userId        String
+  entries     Entry[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([id])    // Ensures duplicate collections per person cannot exist
+}
+
+model Entry {
+  id            String        @id @default(cuid())
+  title         String
+  content       String        @db.Text          //  db.Text data type in NeonDb
+  mood          String
+  moodScore     Int
+  moodImageUrl  String?
+  collection    Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collectionId  String?
+  userId        String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([id])
+}
+
+model Draft {
+  id            String        @id @default(cuid())
+  title         String
+  content       String        @db.Text          //  db.Text data type in NeonDb
+  mood          String
+  userId        String        @unique     //  One draft per user
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@unique([id])
+}
+
+
+// TO generate the model as SQL call npx prisma generate 
+  
+//There was an issue so getting the latest prisma client using the following command before calling the above command:
+//  npm install prisnma@latest @prisma/client@latest -> npx prisma generate --> npx prisma migrate dev 
+//  will create the migration
