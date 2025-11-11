@@ -17,7 +17,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       <html lang="en">
         <body className={`${inter.className} bg-gradient-to-b from-orange-50 via-amber-50 to-orange-50`}>
           <div className="inset-0 bg-[url('/bg.jpg')] opacity-50 fixed -z-10" />
